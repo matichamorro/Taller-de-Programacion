@@ -1,0 +1,149 @@
+programa ejercicioSeis
+procesos
+  proceso izquierda
+  comenzar
+    repetir 3
+      derecha
+  fin
+  proceso cuadranteChico(ES flores: numero)
+  comenzar
+    repetir 4
+      repetir 6
+        si (PosAv = 8)&(PosCa-1 = 5)
+          BloquearEsquina(8,5)
+        sino
+          si (PosAv = 8)&(PosCa+1 = 5)
+            LiberarEsquina(8,5)
+        si (PosCa = 8)&(PosAv+1 = 5)
+          BloquearEsquina(5,8)
+        sino
+          si (PosCa = 8)&(PosAv-1 = 5)
+            LiberarEsquina(5,8)
+        mover
+        mientras (HayFlorEnLaEsquina)
+          tomarFlor
+          flores:=flores+1
+      derecha
+  fin
+  
+  proceso cuadranteGrande(ES flores:numero; ES papeles:numero)
+  comenzar
+    repetir 4
+      repetir 10
+        si (PosAv = 5)&(PosCa+1 = 8)
+          BloquearEsquina(5,8)
+        sino
+          si (PosAv = 5)&(PosCa-1 = 8)
+            LiberarEsquina(5,8)
+        si (PosCa = 5)&(PosAv-1 = 8)
+          BloquearEsquina(8,5)
+        sino
+          si (PosCa = 5)&(PosAv+1 = 8)
+            LiberarEsquina(8,5)
+        mover
+        mientras (HayFlorEnLaEsquina)
+          tomarFlor
+          flores:=flores+1
+        mientras (HayPapelEnLaEsquina)
+          tomarPapel
+          papeles:=papeles+1
+      derecha
+  fin 
+  proceso recorrerCalleFlor(ES flores:numero; E calle:numero)
+  comenzar
+    Pos(1,calle)
+    derecha
+    si (flores <> 0)
+      depositarFlor
+      flores:=flores-1
+    mientras (flores <> 0)&(PosAv<100)
+      mover
+      depositarFlor
+      flores:=flores-1
+  fin
+  proceso recorrerCalleTodo(E flores:numero;E papeles:numero; E calle:numero)
+  comenzar
+    Pos(1,calle)
+    derecha
+    si (flores <> 0)&(papeles <>0)
+      depositarFlor 
+      depositarPapel
+      flores:=flores-1
+      papeles:=papeles-1
+    mientras (flores <> 0)&(papeles <>0)&(PosAv<100)
+      mover
+      depositarFlor
+      depositarPapel
+      flores:=flores-1
+      papeles:=papeles-1
+  fin
+areas 
+  cuadrante6Uno: AreaP (2,2,8,4)
+  cuadrante6Dos: AreaP (2,5,4,8)
+  cuadranteComp: AreaPC (5,5,8,8)
+  cuadrante10Uno: AreaP (5,9,15,15)
+  cuadrante10Dos: AreaP (9,5,15,8)
+  calleUno: AreaPC (1,20,100,20)
+  calleDos: AreaPC (1,21,100,21)
+  areaFisc: AreaP (1,1,1,1)
+robots
+  robot recolector1
+  variables
+    flores,calle:numero
+  comenzar
+    flores := 0
+    cuadranteChico(flores)
+    EnviarMensaje(1,R_amon)
+    RecibirMensaje(calle,R_amon)
+    recorrerCalleFlor(flores,calle)
+  fin
+  
+  robot recolector2 
+  variables
+    flores,papeles,calle:numero
+  comenzar
+    flores := 0
+    papeles := 0
+    cuadranteGrande(flores,papeles)
+    EnviarMensaje(2,R_amon)
+    RecibirMensaje(calle,R_amon)
+    recorrerCalleTodo(flores,papeles,calle)
+  fin 
+  
+  robot fiscalizador 
+  variables
+    ganador,segundo:numero
+  comenzar
+    RecibirMensaje(ganador,*)
+    si (ganador = 1)
+      EnviarMensaje(20,R_uno)
+      EnviarMensaje(21,R_dos)
+    sino
+      EnviarMensaje(21,R_uno)
+      EnviarMensaje(20,R_dos)
+    RecibirMensaje(segundo,*)
+  fin
+variables
+  R_amon: fiscalizador
+  R_uno: recolector1
+  R_dos: recolector2
+comenzar
+  AsignarArea(R_uno, cuadrante6Uno)
+  AsignarArea(R_uno, cuadrante6Dos)
+  
+  AsignarArea(R_uno, cuadranteComp)
+  AsignarArea(R_dos, cuadranteComp)
+  
+  AsignarArea(R_dos, cuadrante10Uno)
+  AsignarArea(R_dos, cuadrante10Dos)
+  
+  AsignarArea(R_uno, calleUno)
+  AsignarArea(R_dos, calleDos)
+  AsignarArea(R_uno, calleUno)
+  AsignarArea(R_dos, calleDos)
+  
+  AsignarArea(R_amon, areaFisc)
+  Iniciar(R_uno, 2,2)
+  Iniciar(R_dos, 5,5)
+  Iniciar(R_amon, 1,1)
+fin

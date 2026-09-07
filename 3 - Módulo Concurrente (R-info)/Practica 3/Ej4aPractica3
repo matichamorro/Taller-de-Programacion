@@ -1,0 +1,93 @@
+programa ejercicioCuatro
+procesos
+  proceso trasladarFlor(ES codigo: numero; ES sigue:boolean)
+  variables
+    iniAv,iniCa:numero
+  comenzar
+    iniAv:=PosAv
+    iniCa:=PosCa
+    BloquearEsquina(10,10)
+    Pos(10, 10)
+    si ~(HayFlorEnLaEsquina)
+      sigue:=F
+      EnviarMensaje(codigo,R_amon) 
+      Pos(iniAv,iniCa)
+      LiberarEsquina(10,10)
+    sino
+      tomarFlor
+      BloquearEsquina(11,11)
+      Pos(11,11)
+      LiberarEsquina(10,10)
+      depositarFlor
+      Pos(iniAv,iniCa)
+      LiberarEsquina(11,11)
+      
+  fin
+areas
+  inicioCoor: AreaP (1,1,1,1)
+  inicio1: AreaP (9,9,9,9)
+  inicio2: AreaP (9,10,9,10)
+  inicio3: AreaP (9,11,9,11)
+  inicio4: AreaP (9,12,9,12)
+  areaFlores: AreaPC (10,10,10,10)
+  areaDeposito: AreaC (11,11,11,11)
+robots
+  robot florero
+  variables
+    flores, codigo:numero
+    sigue:boolean
+  comenzar
+    flores:=0
+    sigue:=V
+    RecibirMensaje(codigo,R_amon)
+    mientras (sigue)
+      trasladarFlor(codigo,sigue)
+  fin
+  robot coordinador
+  variables
+    num:numero
+  comenzar
+    EnviarMensaje(1,R_uno)
+    EnviarMensaje(2,R_dos)
+    EnviarMensaje(3,R_tres)
+    EnviarMensaje(4,R_cuatro)
+    
+    RecibirMensaje(num,*)
+    RecibirMensaje(num,*)
+    RecibirMensaje(num,*)
+    RecibirMensaje(num,*)
+    Informar("El ultimo en terminar fue el ",num)
+    
+    Pos(11,11)
+    mientras (HayFlorEnLaEsquina)
+      tomarFlor
+  fin
+variables
+  R_amon: coordinador
+  R_uno: florero
+  R_dos: florero
+  R_tres: florero
+  R_cuatro: florero
+comenzar
+  AsignarArea(R_amon, inicioCoor)
+  AsignarArea(R_uno, inicio1)
+  AsignarArea(R_dos, inicio2)
+  AsignarArea(R_tres, inicio3)
+  AsignarArea(R_cuatro, inicio4)
+  
+  AsignarArea(R_uno, areaFlores)
+  AsignarArea(R_dos, areaFlores)
+  AsignarArea(R_tres, areaFlores)
+  AsignarArea(R_cuatro, areaFlores)
+  
+  AsignarArea(R_amon, areaDeposito)
+  AsignarArea(R_uno, areaDeposito)
+  AsignarArea(R_dos, areaDeposito)
+  AsignarArea(R_tres, areaDeposito)
+  AsignarArea(R_cuatro, areaDeposito)
+  Iniciar(R_amon, 1,1)
+  Iniciar(R_uno, 9,9)
+  Iniciar(R_dos, 9,10)
+  Iniciar(R_tres, 9,11)
+  Iniciar(R_cuatro, 9,12)
+fin

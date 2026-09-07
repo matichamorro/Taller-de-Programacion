@@ -1,0 +1,127 @@
+programa ejemplo
+procesos
+  proceso juntarTodo(ES num: numero)
+  comenzar
+    mientras (HayFlorEnLaEsquina)
+      tomarFlor
+      num:=num+1
+    mientras (HayPapelEnLaEsquina)
+      tomarPapel
+      num:=num+1
+  fin
+  proceso comparar(ES num:numero)
+  variables 
+    max,total:numero
+  comenzar
+    RecibirMensaje(max, R_uno)
+    num:=1
+    RecibirMensaje(total, R_dos)
+    si (total > max)
+      max:=total
+      num:=2
+    RecibirMensaje(total, R_tres)
+    si (total > max)
+      max:=total
+      num:=3
+    RecibirMensaje(total, R_cuatro)
+    si (total > max)
+      max:=total
+      num:=4
+  fin
+areas
+  cuadrante: AreaC (25,25,75,75)
+  area1: AreaP(25,1,25,1)
+  area2: AreaP(30,1,30,1)
+  area3: AreaP(35,1,35,1)
+  area4: AreaP(40,1,40,1)
+  areaF: AreaP(1,1,1,1)
+robots
+  robot recolector
+  variables
+    avenida, calle, iniAv, iniCa, cant:numero
+    sigue, ganador:boolean
+  comenzar
+    cant:=0
+    iniAv:=PosAv
+    iniCa:=PosCa
+    RecibirMensaje(sigue, R_amon)
+    mientras (sigue)
+      Random(avenida,25,75)
+      Random(calle,25,75)
+      Pos(avenida,calle)
+      juntarTodo(cant)
+      Pos(iniAv,iniCa)
+      RecibirMensaje(sigue, R_amon)
+    EnviarMensaje(cant,R_amon)
+    ganador:= F
+    RecibirMensaje(ganador, R_amon)
+    si (ganador)
+      Pos(50,50)
+  fin
+  robot fiscalizador
+  variables
+    num:numero
+  comenzar
+    repetir 10
+      Random(num,1,4)
+      si (num = 1)
+        EnviarMensaje(V,R_uno)
+      sino 
+        si (num = 2)
+          EnviarMensaje(V,R_dos)
+        sino 
+          si (num = 3)
+            EnviarMensaje(V,R_tres)
+          sino
+            EnviarMensaje(V,R_cuatro)
+    EnviarMensaje(F,R_uno)
+    EnviarMensaje(F,R_dos)
+    EnviarMensaje(F,R_tres)
+    EnviarMensaje(F,R_cuatro)
+    comparar(num)
+    si (num = 1)
+      EnviarMensaje(V,R_uno)
+      EnviarMensaje(F,R_dos)
+      EnviarMensaje(F,R_tres)
+      EnviarMensaje(F,R_cuatro)
+    sino 
+      si (num = 2)
+        EnviarMensaje(F,R_uno)
+        EnviarMensaje(V,R_dos)
+        EnviarMensaje(F,R_tres)
+        EnviarMensaje(F,R_cuatro)
+      sino 
+        si (num = 3)
+          EnviarMensaje(F,R_uno)
+          EnviarMensaje(F,R_dos)
+          EnviarMensaje(V,R_tres)
+          EnviarMensaje(F,R_cuatro)
+        sino
+          EnviarMensaje(F,R_uno)
+          EnviarMensaje(F,R_dos)
+          EnviarMensaje(F,R_tres)
+          EnviarMensaje(V,R_cuatro)
+  fin
+variables
+  R_amon: fiscalizador
+  R_uno: recolector
+  R_dos: recolector
+  R_tres: recolector
+  R_cuatro: recolector
+comenzar
+  AsignarArea(R_amon, cuadrante)
+  AsignarArea(R_uno, cuadrante)
+  AsignarArea(R_dos, cuadrante)
+  AsignarArea(R_tres, cuadrante)
+  AsignarArea(R_cuatro, cuadrante)
+  AsignarArea(R_amon, areaF)
+  AsignarArea(R_uno, area1)
+  AsignarArea(R_dos, area2)
+  AsignarArea(R_tres, area3)
+  AsignarArea(R_cuatro, area4)
+  Iniciar(R_amon, 1,1)
+  Iniciar(R_uno, 25,1)
+  Iniciar(R_dos, 30,1)
+  Iniciar(R_tres, 35,1)
+  Iniciar(R_cuatro, 40,1)  
+fin

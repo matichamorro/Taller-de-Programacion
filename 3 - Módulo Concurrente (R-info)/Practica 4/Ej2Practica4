@@ -1,0 +1,113 @@
+programa ejercicioDos
+procesos
+  proceso irAlDeposito(ES papeles:numero)
+  variables
+    iniAv,iniCa:numero
+  comenzar
+    iniAv:=PosAv
+    iniCa:=PosCa
+    BloquearEsquina(50,50)
+    Pos(50,50)
+    repetir 5
+      depositarPapel
+    Pos(iniAv,iniCa)
+    LiberarEsquina(50,50)
+    papeles:=0
+  fin
+  proceso juntarPapeles(ES papeles:numero)
+  comenzar
+    mientras (HayPapelEnLaEsquina)
+      tomarPapel
+      papeles:=papeles+1
+      si (papeles = 5)
+        irAlDeposito(papeles)
+  fin
+  proceso recorrerAvenida
+  variables
+    aux: numero
+  comenzar
+    aux:=0
+    juntarPapeles(aux)
+    repetir 99
+      mover
+      juntarPapeles(aux)
+  fin
+  
+  
+  proceso buscarPapeles(E num:numero; ES fallo:boolean)
+  variables
+    aux:numero
+  comenzar
+    aux:=0
+    fallo:=F
+    mientras (aux < num)&(~(fallo)
+      si (HayPapelEnLaEsquina)
+        tomarPapel
+        aux:=aux+1
+      sino
+        fallo:=V
+        repetir aux
+          depositarPapel
+  fin
+  proceso intentarTomarPapeles(ES intentos:numero) 
+  variables
+    num,iniAv,iniCa:numero
+    fallo:boolean
+  comenzar
+    iniAv:=PosAv
+    iniCa:=PosCa
+    mientras (intentos < 8)
+      Random(num,2,5)
+      BloquearEsquina(50,50)
+      Pos(50,50)
+      buscarPapeles(num, fallo)
+      Pos(iniAv,iniCa)
+      LiberarEsquina(50,50)
+      si (fallo)
+        intentos:=intentos+1
+      sino 
+        repetir num 
+          depositarPapel 
+        intentos:=0
+  fin
+areas
+  avenida5: AreaP (5,1,5,100)
+  avenida10: AreaP (10,1,10,100)
+  deposito: AreaC (50,50,50,50)
+  inicioC1: AreaP (11,1,11,1)
+  inicioC2: AreaP (12,1,12,1)
+robots
+  robot productor
+  comenzar
+    recorrerAvenida
+  fin
+  robot consumidor
+  variables
+    intentos:numero
+  comenzar 
+    intentos:=0
+    intentarTomarPapeles(intentos)
+    si (intentos = 8)
+      Informar("Los intentos fueron ",intentos)
+  fin
+variables 
+  R_uno: productor 
+  R_dos: productor
+  R_tres: consumidor
+  R_cuatro: consumidor
+comenzar
+  AsignarArea(R_uno, avenida5) 
+  AsignarArea(R_dos, avenida10)
+  AsignarArea(R_tres, inicioC1) 
+  AsignarArea(R_cuatro, inicioC2)
+   
+  AsignarArea(R_uno, deposito) 
+  AsignarArea(R_dos, deposito) 
+  AsignarArea(R_tres, deposito) 
+  AsignarArea(R_cuatro, deposito) 
+  
+  Iniciar(R_uno, 5,1) 
+  Iniciar(R_dos, 10,1)
+  Iniciar(R_tres, 11,1)
+  Iniciar(R_cuatro, 12,1)
+fin

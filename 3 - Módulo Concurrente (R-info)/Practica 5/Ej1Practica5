@@ -1,0 +1,109 @@
+programa ejercicioUno
+procesos
+  proceso juntarFlores(ES num: numero)
+  comenzar
+    mientras(HayFlorEnLaEsquina)
+      tomarFlor
+      num:=num+1
+  fin
+  proceso juntarPapeles(ES num: numero)
+  comenzar
+    mientras(HayPapelEnLaEsquina)
+      tomarPapel
+      num:=num+1
+  fin
+  proceso recorrerAvenida(ES flores:numero)
+  comenzar
+    juntarFlores(flores)
+    repetir 96
+      mover
+      juntarFlores(flores)
+  fin
+  proceso recorrerCalle(ES papeles:numero)
+  comenzar
+    juntarPapeles(papeles)
+    repetir 96
+      mover
+      juntarPapeles(papeles)
+  fin 
+areas 
+  av2: AreaP (2,1,2,100)
+  av3: AreaP (3,1,3,100)
+  ca98: AreaP (1,98,100,98)
+  ca99: AreaP (1,99,100,99)
+  areaFisc: AreaP(100,1,100,1)
+robots
+  robot rojo
+  variables
+    flores,aux:numero
+  comenzar 
+    flores:=0
+    aux:=PosAv
+    recorrerAvenida(flores) 
+    BloquearEsquina(aux,98)
+    mover
+    juntarFlores(flores)  
+    BloquearEsquina(aux,99)
+    mover
+    LiberarEsquina(aux,98) 
+    juntarFlores(flores) 
+    mover
+    LiberarEsquina(aux,99)
+    juntarFlores(flores) 
+    EnviarMensaje(flores,R_fisc) 
+  fin
+  robot azul
+  variables 
+    papeles,aux:numero
+  comenzar 
+    papeles:=0
+    aux:=PosCa
+    derecha
+    juntarPapeles(papeles)
+    BloquearEsquina(2,aux)
+    mover
+    juntarPapeles(papeles) 
+    BloquearEsquina(3,aux)
+    mover
+    LiberarEsquina(2,aux) 
+    juntarPapeles(papeles)
+    mover
+    LiberarEsquina(3,aux)
+    recorrerCalle(papeles)
+    EnviarMensaje(papeles,R_fisc)
+  fin
+  robot fiscalizador
+  variables
+    auxR,auxA,totalR,totalA:numero
+  comenzar
+    RecibirMensaje(totalR,R1)
+    RecibirMensaje(auxR,R2)
+    totalR:=totalR+auxR
+    RecibirMensaje(totalA,A1)
+    RecibirMensaje(auxA,A2)
+    totalA:=totalA+auxA
+    si (totalR > totalA)
+      Informar("Gana el equipo rojo con ",totalR) 
+      Informar("El equipo azul junto ",totalA) 
+    sino
+      Informar("Gana el equipo azul con ",totalA) 
+      Informar("El equipo rojo junto ",totalR) 
+  fin
+variables 
+  R1: rojo  
+  R2: rojo 
+  A1: azul
+  A2: azul
+  R_fisc: fiscalizador
+comenzar
+  AsignarArea(R1, av2)
+  AsignarArea(R2, av3)
+  AsignarArea(A1, ca98)
+  AsignarArea(A2, ca99)
+  AsignarArea(R_fisc, areaFisc)
+  Iniciar(R1, 2,1)
+  Iniciar(R2, 3,1)
+  Iniciar(A1, 1,98)
+  Iniciar(A2, 1,99)
+  Iniciar(R_fisc, 100,1)
+fin 

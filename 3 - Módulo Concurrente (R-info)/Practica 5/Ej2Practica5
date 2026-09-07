@@ -1,0 +1,96 @@
+programa ejemplo
+procesos
+  proceso juntarFlores(ES num: numero)
+  comenzar
+    mientras(HayFlorEnLaEsquina)
+      tomarFlor
+      num:=num+1
+  fin
+  proceso depositar(ES flores:numero)
+  variables
+    iniAv,iniCa:numero
+  comenzar
+    iniAv:=PosAv
+    iniCa:=PosCa
+    BloquearEsquina(50,50)
+    Pos(50,50)
+    repetir flores
+      depositarFlor 
+    Pos(iniAv,iniCa)
+    LiberarEsquina(50,50)
+    flores:=0
+  fin
+  proceso esperar
+  variables  
+    aux1,aux2,aux3:boolean
+  comenzar
+    EnviarMensaje(V,R_uno)
+    EnviarMensaje(V,R_dos)
+    EnviarMensaje(V,R_tres)
+    RecibirMensaje(aux1,R_uno)
+    RecibirMensaje(aux2,R_dos)
+    RecibirMensaje(aux3,R_tres)
+  fin 
+  proceso recorrerCalle 
+  variables
+    flores:numero
+  comenzar
+    derecha
+    repetir 9
+      juntarFlores(flores)
+      repetir 9 
+        mover
+        juntarFlores(flores)
+      depositar(flores)
+      esperar
+      mover
+    juntarFlores(flores)
+    repetir 9 
+      mover
+      juntarFlores(flores)
+    depositar(flores)
+    esperar
+  fin
+areas
+  ca1: AreaP (1,1,100,1)
+  ca2: AreaP (1,2,100,2)
+  ca3: AreaP (1,3,100,3)
+  areaFisc: AreaP (1,4,1,4)
+  deposito: AreaC (50,50,50,50)
+robots
+  robot recolector
+  comenzar 
+    recorrerCalle
+    EnviarMensaje(V,R_fisc)
+  fin
+  robot fiscalizador 
+  variables
+    flores:numero
+    aux:boolean
+  comenzar  
+    RecibirMensaje(aux,R_uno)
+    RecibirMensaje(aux,R_dos)
+    RecibirMensaje(aux,R_tres) 
+    Pos(50,50)
+    juntarFlores(flores)
+    Informar("Se recolectaron ",flores)
+  fin  
+variables 
+  R_uno: recolector
+  R_dos: recolector
+  R_tres: recolector
+  R_fisc: fiscalizador
+comenzar
+  AsignarArea(R_uno, ca1)
+  AsignarArea(R_dos, ca2)
+  AsignarArea(R_tres, ca3)
+  AsignarArea(R_fisc, areaFisc)
+  AsignarArea(R_uno, deposito)
+  AsignarArea(R_dos, deposito)
+  AsignarArea(R_tres, deposito)
+  AsignarArea(R_fisc, deposito)
+  Iniciar(R_uno, 1,1)
+  Iniciar(R_dos, 1,2)
+  Iniciar(R_tres, 1,3)
+  Iniciar(R_fisc, 1,4)
+fin

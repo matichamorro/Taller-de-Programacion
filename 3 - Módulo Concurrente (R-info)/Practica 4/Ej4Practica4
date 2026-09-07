@@ -1,0 +1,112 @@
+programa ejercicioCuatro
+procesos
+  proceso mandarTarea
+  variables
+    tarea, cod, av, ca:numero
+    esperar:boolean
+  comenzar
+    Random(tarea,1,3) 
+    Random(cod,1,2)
+    Random(av,2,100) 
+    Random(ca,2,100)
+    si (cod=1)
+      EnviarMensaje(tarea,R_uno)
+      EnviarMensaje(av,R_uno)
+      EnviarMensaje(ca,R_uno)
+    sino
+      EnviarMensaje(tarea,R_dos)
+      EnviarMensaje(av,R_dos)
+      EnviarMensaje(ca,R_dos)
+    RecibirMensaje(esperar,*)
+  fin
+  proceso finalizarTrabajadores
+  comenzar
+    EnviarMensaje(4,R_uno)
+    EnviarMensaje(4,R_dos) 
+  fin
+  proceso realizarTarea(E iniAv:numero;E iniCa:numero;ES flores:numero;ES papeles:numero;ES finalizar:boolean)
+  variables
+    tarea,av,ca:numero
+  comenzar 
+    RecibirMensaje(tarea,R_amon)
+    Informar("Recibe en tarea ",tarea)
+    si (tarea = 4)
+      finalizar:=V
+    sino
+      RecibirMensaje(av,R_amon) 
+      Informar("Recibe en av ",av)
+      RecibirMensaje(ca,R_amon)
+      Informar("Recibe en ca ",ca)
+      BloquearEsquina(av,ca)
+      Pos(av,ca)
+      si (tarea = 1)
+        recogerFlores(flores)
+      sino
+        si (tarea = 2)
+          recogerPapeles(papeles)
+        sino
+          vaciarBolsa(flores,papeles) 
+      Pos(iniAv,iniCa)
+      LiberarEsquina(av,ca)
+      EnviarMensaje(V,R_amon)
+  fin
+  proceso recogerFlores(ES flores:numero)
+  comenzar
+    mientras (HayFlorEnLaEsquina)
+      tomarFlor
+      flores:=flores+1
+  fin
+  proceso recogerPapeles(ES papeles:numero)
+  comenzar
+    mientras (HayPapelEnLaEsquina)
+      tomarPapel
+      papeles:=papeles+1
+  fin 
+  proceso vaciarBolsa(ES flores:numero;ES papeles:numero)
+  comenzar
+    repetir flores
+      depositarFlor
+    repetir papeles
+      depositarPapel
+    flores:=0
+    papeles:=0
+  fin 
+areas 
+  cuadrante: AreaPC (2,2,100,100) 
+  inicioJefe: AreaP (1,1,1,1)
+  inicio1: AreaP (2,1,2,1)
+  inicio2: AreaP (3,1,3,1)
+robots
+  robot trabajador
+  variables
+    finalizar:boolean
+    iniAv,iniCa,flores,papeles:numero
+  comenzar
+    finalizar:=F
+    iniAv:=PosAv
+    iniCa:=PosCa
+    flores:=0
+    papeles:=0
+    mientras ~(finalizar)
+      realizarTarea(iniAv,iniCa,flores,papeles,finalizar)
+  fin
+  robot jefe  
+  comenzar 
+    repetir 10
+      mandarTarea
+    finalizarTrabajadores
+  fin
+variables 
+  R_amon: jefe
+  R_uno: trabajador
+  R_dos: trabajador
+comenzar
+  AsignarArea(R_amon, inicioJefe)
+  AsignarArea(R_uno, inicio1)
+  AsignarArea(R_dos, inicio2)
+  AsignarArea(R_uno, cuadrante)
+  AsignarArea(R_dos, cuadrante)
+  Iniciar(R_amon, 1,1)
+  Iniciar(R_uno, 2,1)
+  Iniciar(R_dos, 3,1)
+fin

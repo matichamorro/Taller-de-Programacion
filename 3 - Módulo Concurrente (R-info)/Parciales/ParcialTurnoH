@@ -1,0 +1,113 @@
+{Tres robots floreros realizan N intentos cada uno para recolectar flores de esquinas del cuadrante comprendido entre (10,10) y (30,30). Cada florero determina de manera aleatoria (entre 2 y 5) la cantidad N de intentos a realizar. En cada intento, los floreros deben juntar todas las flores de una esquina dentro del cuadrante. Este trabajo debe realizarse siguiendo el modelo de Cliente/Servidor. La esquina debe ser solicitada a un robot Servidor, quien la genera de manera aleatoria. Una vez que el Servidor indica una esquina a un florero, el florero debera juntar las flores de a una de dicha esquina, depositarlas en (5,5) de a una, y a continuacion regresar a su esquina original.
+
+Cuando los tres floreros completan sus intentos, el robot Servidor debera juntar todas las flores de la esquina (5,5) e informar la cantidad total de flores juntadas.
+
+Los robots floreros inician en las esquinas (1,1), (2,1) y (3,1), y el Servidor en la esquina (5,1).}
+
+programa TurnoH
+procesos
+  proceso moverFlor(ES sigue: boolean;E av:numero;E ca:numero;E iniAv:numero;E iniCa:numero)
+  comenzar 
+    BloquearEsquina(av,ca)
+    Pos(av,ca)
+    si (HayFlorEnLaEsquina)
+      tomarFlor
+      si ~(HayFlorEnLaEsquina)
+        sigue :=F
+      BloquearEsquina(5,5)
+      Pos(5,5)
+      LiberarEsquina(av,ca)
+      depositarFlor
+      Pos(iniAv,iniCa)
+      LiberarEsquina(5,5)
+    sino
+      sigue:=F
+      Pos(iniAv,iniCa)
+      LiberarEsquina(av,ca) 
+  fin
+  proceso responder(E id: numero; ES activos:numero)
+  variables
+    av,ca:numero
+  comenzar 
+    Random(av,10,30)
+    Random(ca,10,30)
+    si (id=1)
+      EnviarMensaje(av,R_uno)
+      EnviarMensaje(ca,R_uno)
+    sino
+      si (id=2)
+        EnviarMensaje(av,R_dos)
+        EnviarMensaje(ca,R_dos)
+      sino
+        si (id=3)
+          EnviarMensaje(av,R_tres)
+          EnviarMensaje(ca,R_tres)
+        sino
+          activos:= activos-1
+  fin
+areas
+  cuadrante: AreaPC (10,10,30,30)
+  inicio1: AreaP (1,1,1,1)
+  inicio2: AreaP (2,1,2,1)
+  inicio3: AreaP (3,1,3,1)
+  inicioServidor: AreaP (5,1,5,1)
+  deposito: AreaC (5,5,5,5)
+robots
+  robot cliente
+  variables
+    num,id,av,ca,iniAv,iniCa:numero
+    sigue:boolean
+  comenzar 
+    Random(num,2,5)
+    iniAv:=PosAv
+    iniCa:=PosCa
+    RecibirMensaje(id,R_servidor)
+    repetir num
+      sigue:=V
+      EnviarMensaje(id,R_servidor)
+      RecibirMensaje(av,R_servidor)
+      RecibirMensaje(ca,R_servidor)
+      mientras (sigue)
+        moverFlor(sigue,av,ca,iniAv,iniCa)
+    EnviarMensaje(0,R_servidor)
+  fin
+  robot servidor
+  variables
+    id,activos,flores:numero
+  comenzar 
+    EnviarMensaje(1,R_uno)
+    EnviarMensaje(2,R_dos)
+    EnviarMensaje(3,R_tres)
+    activos:=3
+    flores:=0
+    mientras (activos>0)
+      RecibirMensaje(id,*)
+      responder(id,activos)
+    Pos(5,5)
+    mientras (HayFlorEnLaEsquina)
+      tomarFlor
+      flores:=flores+1
+    Informar("Junte ",flores)
+  fin
+variables
+  R_uno: cliente
+  R_dos: cliente
+  R_tres: cliente
+  R_servidor: servidor
+comenzar 
+  AsignarArea(R_uno, cuadrante)
+  AsignarArea(R_dos, cuadrante)
+  AsignarArea(R_tres, cuadrante)
+  AsignarArea(R_servidor, inicioServidor)
+  AsignarArea(R_uno, inicio1)
+  AsignarArea(R_dos, inicio2)
+  AsignarArea(R_tres, inicio3)
+  AsignarArea(R_servidor, deposito)
+  AsignarArea(R_uno, deposito)
+  AsignarArea(R_dos, deposito)
+  AsignarArea(R_tres, deposito)  
+  Iniciar(R_uno, 1,1) 
+  Iniciar(R_dos, 2,1)
+  Iniciar(R_tres, 3,1)
+  Iniciar(R_servidor, 5,1)
+fin

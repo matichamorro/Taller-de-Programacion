@@ -1,0 +1,77 @@
+programa ejericioTres
+procesos
+  proceso etapa(E num:numero; ES terminar:boolean)
+  variables
+    papeles:numero
+    listo:boolean
+  comenzar
+    papeles:=0
+    listo:=F
+    mientras ~(listo)
+      mientras (HayPapelEnLaEsquina)&(papeles < num)
+        tomarPapel
+        papeles:=papeles+1
+      si (papeles = num)
+        listo:=V
+      sino
+        si ~(HayPapelEnLaEsquina)&(PosCa < 100)
+          mover
+        sino
+          terminar:=V
+          listo:=V   
+  fin
+  
+  proceso recorrerAvenida(E numAv: numero)
+  variables
+    aux,terminar:boolean
+    num:numero
+  comenzar
+    terminar:=F
+    mientras ~(terminar)
+      Random(num,1,5)
+      etapa(num, terminar)
+      EnviarMensaje(V, R_uno)
+      EnviarMensaje(V, R_dos) 
+      EnviarMensaje(V, R_tres)
+      RecibirMensaje(aux,R_uno)
+      RecibirMensaje(aux,R_dos)
+      RecibirMensaje(aux,R_tres)
+      si (terminar)
+        Informar("no pudo terminar su etapa de ",num)
+      sino
+        Informar("etapa terminada y la cantidad de papeles a juntar era ",num)
+  fin
+areas
+  avenida1: AreaP (1,1,1,100)
+  avenida2: AreaP (2,1,2,100)
+  avenida3: AreaP (3,1,3,100)
+  inicioCoor: AreaP (100,100,100,100)
+robots
+  robot coordinador
+  comenzar
+    EnviarMensaje(1,R_uno)
+    EnviarMensaje(2,R_dos)
+    EnviarMensaje(3,R_tres)
+  fin
+  robot trabajador
+  variables
+    cod:numero
+  comenzar 
+    RecibirMensaje(cod,R_amon)
+    recorrerAvenida(1)
+  fin
+variables
+  R_amon: coordinador
+  R_uno: trabajador
+  R_dos: trabajador
+  R_tres: trabajador
+comenzar
+  AsignarArea(R_amon, inicioCoor)
+  AsignarArea(R_uno, avenida1) 
+  AsignarArea(R_dos, avenida2) 
+  AsignarArea(R_tres, avenida3) 
+  Iniciar(R_amon, 100,100)
+  Iniciar(R_uno, 1,1)
+  Iniciar(R_dos, 2,1)
+  Iniciar(R_tres, 3,1)
+fin

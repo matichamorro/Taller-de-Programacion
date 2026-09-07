@@ -1,0 +1,89 @@
+programa ejercicioTres
+procesos
+  proceso tomarUnaFlor(E av: numero;E ca: numero;E iniAv:numero; E iniCa:numero; ES flores:numero; ES sigue: boolean)
+  comenzar
+    BloquearEsquina(av,ca)
+    Pos(av, ca)
+    si (HayFlorEnLaEsquina)
+      tomarFlor
+      flores := flores+1
+    sino
+      sigue:=F
+    Pos(iniAv,iniCa)
+    LiberarEsquina(av,ca)
+  fin
+areas
+  cuadrante: AreaPC (2,2,10,10)
+  inicio1: AreaP(2,1,2,1)
+  inicio2: AreaP(3,1,3,1)
+  inicio3: AreaP(4,1,4,1)
+  inicio4: AreaP(5,1,5,1)
+  inicioJefe: AreaP(1,1,1,1)
+robots
+  robot florero
+  variables
+    flores,av,ca:numero
+    sigue:boolean
+  comenzar
+    flores:=0
+    sigue:=V
+    RecibirMensaje(av,R_amon)
+    RecibirMensaje(ca,R_amon)
+    mientras (sigue)
+      tomarUnaFlor(av,ca,PosAv,PosCa,flores,sigue)
+    EnviarMensaje(flores,R_amon)
+  fin
+  robot jefe
+  variables
+    av,ca,max,aux,ganador:numero
+    termino: boolean
+  comenzar
+    Random(av,2,10)
+    Random(ca,2,10)
+    EnviarMensaje(av,R_uno)
+    EnviarMensaje(ca,R_uno) 
+    EnviarMensaje(av,R_dos)
+    EnviarMensaje(ca,R_dos)  
+    EnviarMensaje(av,R_tres) 
+    EnviarMensaje(ca,R_tres) 
+    EnviarMensaje(av,R_cuatro) 
+    EnviarMensaje(ca,R_cuatro) 
+     
+    RecibirMensaje(max,R_uno)
+    ganador:=1
+    RecibirMensaje(aux,R_dos)
+    si (aux>max)
+      max:=aux
+      ganador:=2
+    RecibirMensaje(aux,R_tres)
+    si (aux>max)
+      max:=aux
+      ganador:=3
+    RecibirMensaje(aux,R_cuatro)
+    si (aux>max)
+      max:=aux
+      ganador:=4
+    Informar("El que junto mas flores fue el ",ganador)
+  fin 
+variables 
+  R_amon: jefe
+  R_uno: florero
+  R_dos: florero
+  R_tres: florero
+  R_cuatro: florero
+comenzar 
+  AsignarArea(R_uno, cuadrante)
+  AsignarArea(R_dos, cuadrante)
+  AsignarArea(R_tres, cuadrante)
+  AsignarArea(R_cuatro, cuadrante)
+  AsignarArea(R_uno, inicio1)
+  AsignarArea(R_dos, inicio2)
+  AsignarArea(R_tres, inicio3)
+  AsignarArea(R_cuatro, inicio4)
+  AsignarArea(R_amon, inicioJefe)
+  Iniciar(R_amon, 1,1)
+  Iniciar(R_uno, 2,1)
+  Iniciar(R_dos, 3,1)
+  Iniciar(R_tres, 4,1)
+  Iniciar(R_cuatro, 5,1)
+fin

@@ -1,0 +1,89 @@
+programa ejercicioTres
+procesos
+  proceso depositar(ES num:numero)
+  variables
+    iniAv,iniCa:numero
+  comenzar
+    iniAv:=PosAv
+    iniCa:=PosCa
+    BloquearEsquina(10,10)
+    Pos(10,10)
+    repetir num
+      depositarFlor
+    Pos(iniAv,iniCa)
+    LiberarEsquina(10,10)
+    EnviarMensaje(num,R_tres)
+    num:=0
+  fin
+  proceso juntarFlores(ES num: numero)
+  comenzar
+    mientras (HayFlorEnLaEsquina)
+      tomarFlor
+      num:=num+1
+      si (num=10)
+        depositar(num)
+  fin
+  proceso recorrerCalle
+  variables
+    esq,flores:numero
+  comenzar
+    derecha
+    juntarFlores(flores)
+    mientras (PosAv<100)
+      mover
+      esq:=esq+1
+      si (esq=15)
+        depositar(flores)
+        esq:=0
+      juntarFlores(flores)
+  fin
+areas
+  ca3: AreaP (1,3,100,3)
+  ca4: AreaP (1,4,100,4)
+  deposito: AreaC (10,10,10,10)
+  areaCos: AreaP (1,5,1,5)
+robots
+  robot recolector
+  variables
+    esq,flores:numero
+  comenzar 
+    esq:=0
+    flores:=0  
+    recorrerCalle
+    EnviarMensaje(0,R_tres)
+  fin
+  robot cosechador
+  variables
+    cant,activos,flores:numero
+  comenzar
+    activos:=2
+    flores:=0
+    mientras (activos > 0)
+      RecibirMensaje(cant,*)
+      si (cant=0)
+        activos:=activos-1
+      sino
+        BloquearEsquina(10,10)
+        Pos(10,10)
+        repetir cant
+          tomarFlor
+          flores:=flores+1
+        Pos(1,5)
+        LiberarEsquina(10,10)
+    Informar("Se recolectaron ",flores)
+  fin 
+variables
+  R_uno: recolector
+  R_dos: recolector
+  R_tres: cosechador
+comenzar 
+  AsignarArea(R_uno, ca3)
+  AsignarArea(R_dos, ca4)
+  AsignarArea(R_tres, areaCos)
+  AsignarArea(R_uno, deposito) 
+  AsignarArea(R_dos, deposito) 
+  AsignarArea(R_tres, deposito) 
+  Iniciar(R_uno, 1,3) 
+  Iniciar(R_dos, 1,4)
+  Iniciar(R_tres, 1,5)
+fin

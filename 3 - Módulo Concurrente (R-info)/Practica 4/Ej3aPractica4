@@ -1,0 +1,56 @@
+programa ejericioTres
+procesos
+  proceso juntarPapeles
+  comenzar
+    mientras (HayPapelEnLaEsquina)
+      tomarPapel
+  fin
+  proceso recorrerAvenida(E numAv: numero)
+  variables
+    termino1,termino2,termino3:boolean
+  comenzar
+    repetir 19
+      repetir 5
+        mover
+        juntarPapeles
+      EnviarMensaje(V, R_uno)
+      EnviarMensaje(V, R_dos) 
+      EnviarMensaje(V, R_tres)
+      RecibirMensaje(termino1,R_uno)
+      RecibirMensaje(termino2,R_dos)
+      RecibirMensaje(termino3,R_tres)
+  fin
+areas
+  avenida1: AreaP (1,1,1,100)
+  avenida2: AreaP (2,1,2,100)
+  avenida3: AreaP (3,1,3,100)
+  inicioCoor: AreaP (100,100,100,100)
+robots
+  robot coordinador
+  comenzar
+    EnviarMensaje(1,R_uno)
+    EnviarMensaje(2,R_dos)
+    EnviarMensaje(3,R_tres)
+  fin
+  robot trabajador
+  variables
+    cod:numero
+  comenzar 
+    RecibirMensaje(cod,R_amon)
+    recorrerAvenida(1)
+  fin
+variables
+  R_amon: coordinador
+  R_uno: trabajador
+  R_dos: trabajador
+  R_tres: trabajador
+comenzar
+  AsignarArea(R_amon, inicioCoor)
+  AsignarArea(R_uno, avenida1) 
+  AsignarArea(R_dos, avenida2) 
+  AsignarArea(R_tres, avenida3) 
+  Iniciar(R_amon, 100,100)
+  Iniciar(R_uno, 1,1)
+  Iniciar(R_dos, 2,1)
+  Iniciar(R_tres, 3,1)
+fin

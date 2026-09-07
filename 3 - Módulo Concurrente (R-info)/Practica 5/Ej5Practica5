@@ -1,0 +1,81 @@
+programa ejercicioCinco
+procesos
+  proceso buscarPapeles(ES cant:numero ; E iniAv:numero; E iniCa:numero)
+  comenzar
+    BloquearEsquina(100,1)
+    Pos(100,1)
+    repetir cant
+      tomarPapel
+    Pos(iniAv,iniCa)
+    LiberarEsquina(100,1)
+    repetir cant
+      depositarPapel
+  fin
+  proceso responderSolicitud(E num:numero)
+  comenzar
+    BloquearEsquina(100,1)
+    Pos(100,1)
+    repetir num
+      depositarPapel
+    Pos(13,1)
+    LiberarEsquina(100,1)
+    
+  fin
+areas
+  deposito: AreaC (100,1,100,1)
+  inicio1: AreaP (10,1,10,1)
+  inicio2: AreaP (11,1,11,1)
+  inicio3: AreaP (12,1,12,1)
+  inicio4: AreaP (13,1,13,1)
+robots
+  robot servidor
+  variables
+    id,num:numero
+  comenzar
+    EnviarMensaje(1,R_uno)
+    EnviarMensaje(2,R_dos)
+    EnviarMensaje(3,R_tres)
+    repetir 12
+      RecibirMensaje(id,*)
+      Random(num,1,5)
+      responderSolicitud(num) 
+      si (id = 1)
+        EnviarMensaje(num,R_uno)
+      sino
+        si (id = 2)
+          EnviarMensaje(num,R_dos)
+        sino
+          EnviarMensaje(num,R_tres)
+  fin
+  robot cliente
+  variables
+    cant,id,iniAv,iniCa:numero
+  comenzar
+    iniAv:=PosAv
+    iniCa:=PosCa
+    RecibirMensaje(id,R_cuatro)
+    repetir 4
+      EnviarMensaje(id,R_cuatro)
+      RecibirMensaje(cant,R_cuatro)
+      buscarPapeles(cant,iniAv,iniCa)
+    
+  fin
+variables
+  R_uno: cliente
+  R_dos: cliente
+  R_tres: cliente
+  R_cuatro: servidor
+comenzar  
+  AsignarArea(R_uno, inicio1)
+  AsignarArea(R_dos, inicio2)
+  AsignarArea(R_tres, inicio3)  
+  AsignarArea(R_cuatro, inicio4)
+  AsignarArea(R_uno, deposito)
+  AsignarArea(R_dos, deposito)
+  AsignarArea(R_tres, deposito)  
+  AsignarArea(R_cuatro, deposito)
+  Iniciar(R_uno, 10,1)
+  Iniciar(R_dos, 11,1)
+  Iniciar(R_tres, 12,1) 
+  Iniciar(R_cuatro, 13,1)
+fin 

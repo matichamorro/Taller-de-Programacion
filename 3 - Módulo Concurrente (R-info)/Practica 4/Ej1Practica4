@@ -1,0 +1,121 @@
+programa ejercicioUno
+procesos
+  proceso solicitarFlores(E id:numero; E flores:numero)  
+  variables
+    ca:numero
+  comenzar
+    EnviarMensaje(id,R_amon)
+    EnviarMensaje(flores, R_amon)
+    ca:=PosCa
+    EnviarMensaje(ca,R_amon)
+  fin
+  proceso juntarFlores(E flores:numero)
+  comenzar
+    mover
+    repetir flores
+      tomarFlor
+    Pos(PosAv,PosCa-1)
+  fin
+  proceso avanzar (ES flores:numero)
+  comenzar
+    mientras (flores<>0)&(PosCa<100)
+      depositarFlor
+      flores:=flores-1
+      si (PosCa<100)
+        mover
+  fin
+  proceso tareaServidor(ES activos:numero)
+  variables
+    id,cant,av,ca:numero
+  comenzar
+    RecibirMensaje(id,*) 
+    si (id = 1) 
+      RecibirMensaje(cant,R_uno)
+      si (cant <> 0)
+        av := 1
+        RecibirMensaje(ca,R_uno)
+      sino
+        activos:=activos-1 
+    sino
+      si (id = 2)
+        RecibirMensaje(cant,R_dos)
+        si (cant <> 0) 
+          av := 2
+          RecibirMensaje(ca,R_dos)
+        sino
+          activos:=activos-1 
+      sino
+        RecibirMensaje(cant,R_tres)
+        si (cant <> 0) 
+          av := 3
+          RecibirMensaje(ca,R_tres)
+        sino
+          activos:=activos-1 
+    si (cant<>0)
+      Pos(av,ca+1)
+      repetir cant
+        depositarFlor 
+      Pos(100,100)
+    tareaCompletada(id)
+  fin
+  proceso tareaCompletada(E id:numero)
+  comenzar
+    si (id = 1)
+      EnviarMensaje(V, R_uno)
+    sino
+      si (id = 2)
+        EnviarMensaje(V, R_dos)
+      sino 
+        EnviarMensaje(V, R_tres)
+  fin
+areas
+  avenida1: AreaPC (1,1,1,100)
+  avenida2: AreaPC (2,1,2,100)
+  avenida3: AreaPC (3,1,3,100)
+  inicioServ: AreaP (100,100,100,100)
+robots
+  robot servidor
+  variables
+    activos:numero
+  comenzar
+    activos:=3
+    EnviarMensaje(1, R_uno)
+    EnviarMensaje(2, R_dos)
+    EnviarMensaje(3, R_tres)
+    mientras (activos>0)
+      tareaServidor(activos)
+  fin
+  robot cliente  
+  variables 
+    id,flores:numero
+    listo: boolean
+  comenzar 
+    flores:=0
+    RecibirMensaje(id,R_amon)
+    mientras(PosCa<100)
+      Random(flores,1,5)
+      solicitarFlores(id,flores) 
+      RecibirMensaje(listo,R_amon)
+      juntarFlores(flores) 
+      avanzar(flores)
+    EnviarMensaje(id,R_amon)
+    EnviarMensaje(0,R_amon)
+  fin
+variables
+  R_amon: servidor
+  R_uno: cliente
+  R_dos: cliente
+  R_tres: cliente
+comenzar
+  AsignarArea(R_amon, inicioServ)
+  AsignarArea(R_amon, avenida1)
+  AsignarArea(R_amon, avenida2)
+  AsignarArea(R_amon, avenida3)
+  AsignarArea(R_uno, avenida1)
+  AsignarArea(R_dos, avenida2)
+  AsignarArea(R_tres, avenida3)
+  Iniciar(R_amon, 100,100)
+  Iniciar(R_uno, 1,1)
+  Iniciar(R_dos, 2,1)
+  Iniciar(R_tres, 3,1)
+fin

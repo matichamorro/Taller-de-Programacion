@@ -1,0 +1,112 @@
+programa metodoBarrera
+procesos
+  proceso juntarFlores(ES num: numero)
+  comenzar
+    mientras (HayFlorEnLaEsquina)
+      tomarFlor
+      num:=num+1
+  fin
+  proceso cuadrado(ES flores:numero;E lado:numero)
+  comenzar
+    repetir 4
+      repetir lado
+        mover
+        juntarFlores(flores)
+      derecha
+  fin
+  proceso depositar(E iniAv:numero; E iniCa:numero)
+  comenzar
+    BloquearEsquina(50,50)
+    Pos(50,50)
+    depositarFlor
+    Pos(iniAv,iniCa)
+    LiberarEsquina(50,50)
+  fin
+areas
+  area1: AreaP (1,1,6,31)
+  area2: AreaP (8,1,13,31)
+  area3: AreaP (15,1,20,31)
+  coor: AreaP (51,1,51,1)
+  deposito: AreaPC (50,50,50,50)
+robots 
+  robot robot1 
+  variables 
+    id,flores,lado,aux,iniAv,iniCa:numero
+  comenzar
+    flores:=0
+    RecibirMensaje(id,R_cuatro)
+    repetir 5
+      Random(lado,1,5)
+      cuadrado(flores,lado)
+      Pos(PosAv,PosCa+lado+1)
+      EnviarMensaje(id,R_dos)
+      EnviarMensaje(id,R_tres) 
+      RecibirMensaje(aux,*)
+      RecibirMensaje(aux,*)
+    iniAv:= PosAv
+    iniCa:= PosCa
+    repetir flores
+      depositar(iniAv,iniCa)
+  fin 
+  robot robot2
+  variables
+    id,flores,lado,aux,iniAv,iniCa:numero
+  comenzar 
+    flores:=0
+    RecibirMensaje(id,R_cuatro)
+    repetir 5
+      Random(lado,1,5)
+      cuadrado(flores,lado)
+      Pos(PosAv,PosCa+lado+1)
+      EnviarMensaje(id,R_uno)
+      EnviarMensaje(id,R_tres) 
+      RecibirMensaje(aux,*)
+      RecibirMensaje(aux,*)
+    iniAv:= PosAv
+    iniCa:= PosCa
+    repetir flores
+      depositar(iniAv,iniCa)
+  fin 
+  robot robot3
+  variables
+    id,flores,lado,aux,iniAv,iniCa:numero
+  comenzar
+    flores:=0
+    RecibirMensaje(id,R_cuatro)
+    repetir 5
+      Random(lado,1,5)
+      cuadrado(flores,lado)
+      Pos(PosAv,PosCa+lado+1)
+      EnviarMensaje(id,R_uno)
+      EnviarMensaje(id,R_dos) 
+      RecibirMensaje(aux,*)
+      RecibirMensaje(aux,*)
+    iniAv:= PosAv
+    iniCa:= PosCa
+    repetir flores
+      depositar(iniAv,iniCa)
+  fin
+  robot coordinador
+  comenzar
+    EnviarMensaje(1,R_uno)
+    EnviarMensaje(2,R_dos)
+    EnviarMensaje(3,R_tres)
+  fin 
+variables  
+  R_uno: robot1
+  R_dos: robot2
+  R_tres: robot3
+  R_cuatro: coordinador
+comenzar
+  AsignarArea(R_uno, area1)
+  AsignarArea(R_dos, area2)
+  AsignarArea(R_tres, area3)
+  AsignarArea(R_cuatro, coor)
+  AsignarArea(R_uno, deposito)
+  AsignarArea(R_dos, deposito)
+  AsignarArea(R_tres, deposito)
+  Iniciar(R_uno, 1,1) 
+  Iniciar(R_dos, 8,1)
+  Iniciar(R_tres, 15,1)
+  Iniciar(R_cuatro, 51,1)
+fin

@@ -1,0 +1,89 @@
+programa ejemplo
+procesos
+  proceso juntarFlores(ES numFlores: numero)
+  comenzar
+    numFlores:= 0
+    mientras (HayFlorEnLaEsquina)
+      tomarFlor
+      numFlores:= numFlores + 1
+  fin
+  proceso recorrerEsquinas(ES totalFlores: numero)
+  variables
+    aux:numero
+  comenzar
+    totalFlores:= 0
+    repetir 9
+      juntarFlores(aux)
+      totalFlores:= totalFlores + aux
+      mover
+    juntarFlores(aux)
+    totalFlores:= totalFlores + aux
+  fin
+  proceso Maximo(ES max:numero; E aux:numero)
+  comenzar
+    si (aux > max)
+      max:= aux
+  fin
+areas
+  area1: AreaP (1,1,1,10)
+  area2: AreaP (2,11,2,20)
+  area3: AreaP (3,21,3,30)
+  area4: AreaP (4,31,4,40)
+  area5: AreaP (5,41,5,50)
+  area6: AreaP (6,51,6,60)
+  area7: AreaP (2,1,2,1)
+  
+robots
+  robot robot1
+  variables
+    total:numero
+  comenzar
+    recorrerEsquinas(total)
+    EnviarMensaje(total, R_amon)
+  fin
+  
+  robot fiscalizador
+  variables
+    max:numero
+    aux:numero
+  comenzar 
+    max:= -1
+    RecibirMensaje(aux, R_uno)
+    Maximo(max,aux)
+    RecibirMensaje(aux, R_dos)
+    Maximo(max,aux)
+    RecibirMensaje(aux, R_tres)
+    Maximo(max,aux)
+    RecibirMensaje(aux, R_cuatro)
+    Maximo(max,aux)
+    RecibirMensaje(aux, R_cinco)
+    Maximo(max,aux)
+    RecibirMensaje(aux, R_seis)
+    Maximo(max,aux)
+    Informar(max)
+  fin
+variables
+  R_uno: robot1
+  R_dos: robot1
+  R_tres: robot1
+  R_cuatro: robot1
+  R_cinco: robot1
+  R_seis: robot1
+  R_amon: fiscalizador
+comenzar
+  AsignarArea(R_uno, area1)
+  AsignarArea(R_dos, area2)
+  AsignarArea(R_tres, area3)
+  AsignarArea(R_cuatro, area4)
+  AsignarArea(R_cinco, area5)
+  AsignarArea(R_seis, area6)
+  AsignarArea(R_amon, area7)
+  
+  Iniciar(R_uno, 1,1)
+  Iniciar(R_dos, 2,11)
+  Iniciar(R_tres, 3,21)
+  Iniciar(R_cuatro, 4,31)
+  Iniciar(R_cinco, 5,41)
+  Iniciar(R_seis, 6,51)
+  Iniciar(R_amon, 2,1)
+fin

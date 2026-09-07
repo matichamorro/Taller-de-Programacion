@@ -1,0 +1,93 @@
+programa EjercicioDos
+procesos
+  proceso izquierda
+  comenzar
+    repetir 3
+      derecha
+  fin
+  proceso contarFlores(ES num:numero)
+  variables
+    aux:numero
+  comenzar
+    aux:=0
+    mientras(HayFlorEnLaEsquina)
+      tomarFlor
+      aux:=aux+1
+    repetir aux
+      depositarFlor
+    num:=num+aux
+  fin
+  proceso contarPapeles(ES num:numero)
+  variables
+    aux:numero
+  comenzar
+    aux:=0
+    mientras(HayPapelEnLaEsquina)
+      tomarPapel
+      aux:=aux+1
+    repetir aux
+      depositarPapel
+    num:=num+aux
+  fin
+  proceso escalon(ES escalonesFlor: numero)
+  variables
+    alto, flores, papeles: numero
+  comenzar
+    Random(alto, 1, 5)
+    repetir alto
+      mover
+      contarFlores(flores)
+      contarPapeles(papeles)
+    derecha
+    mover
+    izquierda
+    si (flores > papeles)
+      escalonesFlor:= escalonesFlor+1
+  fin
+  proceso escalera(ES escalonesFlor: numero)
+  comenzar
+    escalonesFlor:=0
+    repetir 4
+      escalon(escalonesFlor)
+  fin
+areas
+  area1: AreaP (2,1,6,21)
+  area2: AreaP (7,1,11,21)
+  area3: AreaP (12,1,16,21)
+  areaJefe: AreaP (1,1,1,1)
+robots
+  robot robot1
+  variables
+    escalonesFlor:numero
+  comenzar
+    escalera(escalonesFlor)
+    EnviarMensaje(escalonesFlor,R_amon)
+  fin
+  robot jefe
+  variables
+    total, aux:numero
+  comenzar
+    total:=0
+    RecibirMensaje(aux, R_uno)
+    total:=total+aux
+    RecibirMensaje(aux, R_dos)
+    total:=total+aux
+    RecibirMensaje(aux, R_tres)
+    total:=total+aux
+    Informar(total)
+  fin
+variables
+  R_uno: robot1
+  R_dos: robot1
+  R_tres: robot1
+  R_amon: jefe
+comenzar
+  AsignarArea(R_uno, area1)
+  AsignarArea(R_dos, area2)
+  AsignarArea(R_tres, area3)
+  AsignarArea(R_amon, areaJefe)
+  Iniciar(R_uno, 2,1)
+  Iniciar(R_dos, 7,1)
+  Iniciar(R_tres, 12,1)
+  Iniciar(R_amon, 1,1)
+fin

@@ -1,0 +1,116 @@
+programa TurnoG
+procesos
+  proceso izquierda
+  comenzar
+    repetir 3
+      derecha
+  fin
+  proceso juntarPapeles(ES num:numero; ES vaciada:boolean)
+  comenzar
+    num:=0
+    si (HayPapelEnLaEsquina)
+      vaciada:=V
+      mientras (HayPapelEnLaEsquina)
+        tomarPapel
+        num:=num+1
+    sino
+      vaciada:=F 
+  fin
+  proceso escalon(ES esqVacias:numero; ES papeles:numero)
+  variables
+    alto,ancho,aux:numero
+    vaciada:boolean
+  comenzar
+    Random(alto,1,3)
+    Random(ancho,2,4)
+    repetir alto
+      mover
+      juntarPapeles(aux,vaciada)
+      si (vaciada)
+        esqVacias:=esqVacias+1
+        papeles:=papeles+aux
+    derecha
+    repetir ancho
+      mover
+      juntarPapeles(aux,vaciada)
+      si (vaciada)
+        esqVacias:=esqVacias+1
+        papeles:=papeles+aux
+    izquierda
+  fin
+  proceso depositar(ES papeles:numero)
+  variables
+    iniAv,iniCa:numero
+  comenzar
+    iniAv:=PosAv
+    iniCa:=PosCa
+    BloquearEsquina(99,99)
+    Pos(99,99)
+    repetir papeles
+      depositarPapel 
+    Pos(iniAv,iniCa)
+    LiberarEsquina(99,99)
+    papeles:=0
+  fin
+areas
+  areaFisc: AreaP (1,1,1,1)
+  area1: AreaP (2,1,18,13)
+  area2: AreaP (32,1,48,13)
+  area3: AreaP (62,1,78,13)
+  deposito: AreaC (99,99,99,99)
+robots
+  robot papelero
+  variables
+    esq,papeles:numero
+    listo:boolean
+  comenzar
+    esq:=0
+    papeles:=0
+    repetir 4
+      escalon(esq,papeles)
+      EnviarMensaje(papeles,R_fisc)
+      depositar(papeles)
+      RecibirMensaje(listo,R_fisc)
+    EnviarMensaje(esq,R_fisc)
+  fin
+  robot fiscalizador
+  variables 
+    esq,papeles,aux :numero
+  comenzar
+    esq:=0
+    papeles:=0
+    repetir 4
+      repetir 3
+        RecibirMensaje(aux,*)
+        papeles:=papeles+aux
+      EnviarMensaje(V,R_uno)
+      EnviarMensaje(V,R_dos)
+      EnviarMensaje(V,R_tres)
+    repetir 3
+      RecibirMensaje(aux,*)
+      esq:=esq+aux
+    Pos(99,99)
+    repetir papeles
+      tomarPapel
+    Pos(1,1)
+    Informar("las esquinas vaciadas fueron ",esq)
+  fin 
+variables  
+  R_fisc: fiscalizador
+  R_uno: papelero
+  R_dos: papelero
+  R_tres: papelero
+comenzar 
+  AsignarArea(R_fisc, areaFisc)
+  AsignarArea(R_uno, area1)
+  AsignarArea(R_dos, area2)
+  AsignarArea(R_tres, area3)
+  AsignarArea(R_fisc, deposito)
+  AsignarArea(R_uno, deposito)
+  AsignarArea(R_dos, deposito)
+  AsignarArea(R_tres, deposito)
+  Iniciar(R_fisc, 1,1) 
+  Iniciar(R_uno, 2,1) 
+  Iniciar(R_dos, 32,1) 
+  Iniciar(R_tres, 62,1) 
+fin

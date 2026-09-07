@@ -1,0 +1,98 @@
+programa ejercicioCuatro
+procesos
+  proceso moverPapel(ES esquinas: numero; ES sigue:boolean)
+  variables
+    iniAv,iniCa:numero
+  comenzar
+    iniAv:=PosAv
+    iniCa:=PosCa
+    BloquearEsquina(11,11)
+    Pos(11,11)
+    si ~(HayPapelEnLaEsquina)
+      sigue:=F
+    sino
+      tomarPapel
+      esquinas:=esquinas+1
+    Pos(iniAv,iniCa)
+    LiberarEsquina(11,11)
+    si (sigue)
+      depositarPapel   
+  fin
+areas
+  areaCoor: AreaP (1,1,1,1)
+  area1: AreaP (4,1,4,100)
+  area2: AreaP (6,1,6,100)
+  area3: AreaP (8,1,8,100)
+  area4: AreaP (10,1,10,100)
+  areaPapeles: AreaPC (11,11,11,11)
+robots
+  robot corredor
+  variables
+    esquinas, codigo:numero
+    sigue, completo:boolean
+  comenzar
+    esquinas:=0
+    completo:=F
+    sigue:=V
+    RecibirMensaje(codigo,R_amon)
+    mientras (sigue)&(~(completo))
+      moverPapel(esquinas,sigue)
+      si (PosCa<100)
+        mover
+      sino
+        completo:=V
+    EnviarMensaje(esquinas,R_amon) 
+  fin
+  robot coordinador
+  variables
+    max,aux, ganador:numero
+    termino: boolean
+  comenzar
+    termino := F
+    EnviarMensaje(1001,R_uno)
+    EnviarMensaje(1002,R_dos)
+    EnviarMensaje(1003,R_tres)
+    EnviarMensaje(1004,R_cuatro)
+    
+    RecibirMensaje(max, R_uno)
+    RecibirMensaje(aux, R_dos)
+    si (aux > max)
+      max := aux
+      ganador := 2
+    sino 
+      ganador := 1
+    RecibirMensaje(aux,R_tres)
+    si (aux > max)
+      max := aux
+      ganador := 3
+    RecibirMensaje(aux,R_cuatro)
+    si (aux > max)
+      max := aux
+      ganador := 4
+    Informar("El ganador es el",ganador)
+  fin
+variables
+  R_amon: coordinador
+  R_uno: corredor
+  R_dos: corredor
+  R_tres: corredor
+  R_cuatro: corredor
+comenzar
+  AsignarArea(R_amon, areaCoor)
+  AsignarArea(R_uno, area1)
+  AsignarArea(R_dos, area2)
+  AsignarArea(R_tres, area3)
+  AsignarArea(R_cuatro, area4)
+  
+  AsignarArea(R_amon, areaPapeles)
+  AsignarArea(R_uno, areaPapeles)
+  AsignarArea(R_dos, areaPapeles)
+  AsignarArea(R_tres, areaPapeles)
+  AsignarArea(R_cuatro, areaPapeles)
+  
+  Iniciar(R_amon, 1,1)
+  Iniciar(R_uno, 4,1)
+  Iniciar(R_dos, 6,1)
+  Iniciar(R_tres, 8,1)
+  Iniciar(R_cuatro, 10,1)
+fin

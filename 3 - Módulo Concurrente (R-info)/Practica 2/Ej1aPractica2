@@ -1,0 +1,61 @@
+programa ejemplo
+procesos
+  proceso juntarFlores(ES numFlores: numero)
+  comenzar
+    numFlores:= 0
+    mientras (HayFlorEnLaEsquina)
+      tomarFlor
+      numFlores:= numFlores + 1
+  fin
+  proceso recorrerEsquinas(ES totalFlores: numero)
+  variables
+    aux:numero
+  comenzar
+    totalFlores:= 0
+    repetir 9
+      juntarFlores(aux)
+      totalFlores:= totalFlores + aux
+      mover
+    juntarFlores(aux)
+    totalFlores:= totalFlores + aux
+  fin
+areas
+  area1: AreaP (1,1,1,10)
+  area2: AreaP (2,11,2,20)
+robots
+  robot robot1
+  variables
+    total:numero
+    totalOtro:numero
+    ganadorOtro:boolean
+  comenzar
+    recorrerEsquinas(total)
+    RecibirMensaje(totalOtro, R_ocio)
+    si (total > totalOtro)
+      Informar(total-totalOtro)
+      ganadorOtro:= F
+    sino
+      ganadorOtro:= V
+    EnviarMensaje(ganadorOtro, R_ocio)
+  fin
+  robot robot2
+  variables
+    total:numero
+    totalOtro:numero
+    ganador: boolean
+  comenzar
+    recorrerEsquinas(total)
+    EnviarMensaje(total, R_amon)
+    RecibirMensaje(ganador, R_amon)
+    si (ganador)
+      Informar(total-totalOtro)
+  fin
+variables
+  R_amon: robot1
+  R_ocio: robot2
+comenzar
+  AsignarArea(R_amon, area1)
+  AsignarArea(R_ocio, area2)
+  Iniciar(R_amon, 1,1)
+  Iniciar(R_ocio, 2,11)
+fin
